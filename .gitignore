@@ -6,11 +6,12 @@ __pycache__/
 # OS files
 .DS_Store
 
-# Data and cache files
-data/
+# Cache and temporary files
 .ipynb_checkpoints/
 .cache/
 temp/
+data/cache/
+data/tmp/
 
 # Jupyter/Lab
 .jupyter/
@@ -38,7 +39,7 @@ package-lock.json
 *.mp4
 *.avi
 
-# Large text files
-*.txt
-!requirements.txt
-!README.txt
+# Generated transcript and output files
+processed_transcript*.txt
+output*.txt
+*.log
