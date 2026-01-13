@@ -1,70 +1,61 @@
 import streamlit as st
+import json
 import os
-from io import BytesIO
-import tempfile # 用于创建临时文件
-from pathlib import Path # 用于获取文件后缀
 from session_state import init_session_state
-from frontend.ui_components import upload_section, summary_section, chat_section
 
-# 页面配置
-st.set_page_config(page_title="AI 视频助手", layout="wide")
+# 必须是第一个 Streamlit 命令
+st.set_page_config(page_title="AI 视频助手 - 登录", layout="centered")
 init_session_state()
 
-# 侧边栏（可选，用于存放设置）
-with st.sidebar:
-    st.title("ZX-CE AI Assistant")
-    st.info("基于 Whisper + LangChain 的视频问答系统 ")
+# 后端工具函数：从 JSON 加载用户
+def load_users():
+    # 优先读取物理文件
+    if os.path.exists("data/users.json"):
+        with open("data/users.json", "r", encoding="utf-8") as f:
+            return json.load(f)
+    # 如果文件不存在，使用 session_state 中的模拟数据作为备选
+    return st.session_state.get("user_db", {"1": "1"})
 
-# 定义阈值: 100MB
-MAX_MEMORY_SIZE = 100 * 1024 * 1024 
+# --- 1. 自动跳转逻辑 ---
+if st.session_state.is_logged_in:
+    st.switch_page("pages/01_Main_App.py")
 
-if not st.session_state.file_uploaded:
-    _, col2, _ = st.columns([1, 2, 1])
-    with col2:
-        uploaded_file = upload_section()
-        if uploaded_file:
-            # 获取文件大小
-            file_size = uploaded_file.size
-            
-            if file_size < MAX_MEMORY_SIZE:
-                # 方式1：直接存入内存 (BytesIO)
-                st.session_state.video_data = BytesIO(uploaded_file.read())
-                st.session_state.processing_mode = "memory"
-                st.success(f"小文件预览：已载入内存 ({file_size / 1024 / 1024:.2f} MB)")
-            else:
-                # 方式2：保存到临时磁盘路径 (tempfile)
-                # suffix确保浏览器和后端能识别格式
-                suffix = os.path.splitext(uploaded_file.name)[-1]
-                with tempfile.NamedTemporaryFile(delete=False, suffix=suffix) as tmp:
-                    tmp.write(uploaded_file.read())
-                    st.session_state.video_data = tmp.name
-                st.session_state.processing_mode = "disk"
-                st.warning(f"大文件预览：已转存临时磁盘 ({file_size / 1024 / 1024:.2f} MB)")
-            
-            st.session_state.file_uploaded = True
-            st.rerun()
-else:
-    left_col, right_col = st.columns([1, 1])
-    with left_col:
-        st.subheader("📹 原始视频")
+# --- 2. 登录界面渲染 ---
+st.title("📽️ AI 视频助手系统")
+tab1, tab2 = st.tabs(["用户登录", "新用户注册"])
+
+with tab1:
+    input_user = st.text_input("用户名", key="login_user_id")
+    input_pwd = st.text_input("密码", type="password", key="login_pwd_id")
     
-        if st.session_state.video_data:
-        # 无论内存还是磁盘模式，我们都尝试获取一个可靠的字节流
-            try:
-                if st.session_state.processing_mode == "memory":
-                # 重新获取字节数据
-                    st.session_state.video_data.seek(0)
-                    video_bytes = st.session_state.video_data.read()
-                # 尝试直接传字节数组（通常比传 BytesIO 更稳定）
-                    st.video(video_bytes)
-                else:
-                # 磁盘模式：检查文件并读取
-                    if os.path.exists(st.session_state.video_data):
-                        st.video(st.session_state.video_data)
-            except Exception as e:
-                st.error(f"视频渲染失败: {e}")
+    # if st.button("立即登录", use_container_width=True):
+    #     users = load_users()
+    #     if input_user in users and users[input_user] == input_pwd:
+    #         st.session_state.is_logged_in = True
+    #         st.session_state.username = input_user
+    #         st.switch_page("pages/01_Main_App.py") # 关键：登录成功立即跳转
+    #     else:
+    #         st.error("用户名或密码错误")
 
-    with right_col:
-        summary_section(st.session_state.summary)
-        st.divider()
-        chat_section()
+    if st.button("立即登录", use_container_width=True):
+        users = load_users()
+    
+    # 后端防御性编程：确保两端都是纯净的字符串
+        input_u = str(input_user).strip()
+        input_p = str(input_pwd).strip()
+    
+    # 校验
+        if input_u in users and str(users[input_u]) == input_p:
+            st.session_state.is_logged_in = True
+            st.session_state.username = input_u
+            st.success("登录成功！")
+            st.switch_page("pages/01_Main_App.py")
+        else:
+            st.error("用户名或密码错误")
+
+with tab2:
+    reg_user = st.text_input("创建用户名", key="reg_user_id")
+    reg_pwd = st.text_input("创建密码", type="password", key="reg_pwd_id")
+    if st.button("提交注册", use_container_width=True):
+        # 此处可添加写入 data/users.json 的逻辑
+        st.info("注册功能开发中...")
