@@ -1,7 +1,6 @@
 aiohappyeyeballs==2.6.1
 aiohttp==3.13.3
 aiosignal==1.4.0
-altgraph @ file:///AppleInternal/Library/BuildRoots/4~CAP1ugDqYZ2ZVF_54thwSWnK-8L4LO5_Zcx-VcI/Library/Caches/com.apple.xbs/Sources/python3/altgraph-0.17.2-py2.py3-none-any.whl
 annotated-types==0.7.0
 anyio==4.12.1
 appnope==0.1.4
@@ -21,7 +20,7 @@ faiss-cpu==1.13.0
 filelock==3.19.1
 frozenlist==1.8.0
 fsspec==2025.10.0
-future @ file:///AppleInternal/Library/BuildRoots/4~CAP1ugDqYZ2ZVF_54thwSWnK-8L4LO5_Zcx-VcI/Library/Caches/com.apple.xbs/Sources/python3/future-0.18.2-py3-none-any.whl
+googletrans==4.0.0-rc1
 h11==0.16.0
 hf-xet==1.2.0
 httpcore==1.0.9
@@ -43,9 +42,7 @@ langchain-core==0.3.83
 langchain-huggingface==0.3.1
 langchain-text-splitters==0.3.11
 langsmith==0.4.37
-macholib @ file:///AppleInternal/Library/BuildRoots/4~CAP1ugDqYZ2ZVF_54thwSWnK-8L4LO5_Zcx-VcI/Library/Caches/com.apple.xbs/Sources/python3/macholib-1.15.2-py2.py3-none-any.whl
 marshmallow==3.26.2
-matplotlib-inline==0.2.1
 multidict==6.7.0
 mypy_extensions==1.1.0
 nest-asyncio==1.6.0
@@ -64,9 +61,6 @@ pydantic==2.12.5
 pydantic-settings==2.11.0
 pydantic_core==2.41.5
 Pygments==2.19.2
-PyQt5==5.15.11
-PyQt5-Qt5==5.15.18
-PyQt5_sip==12.17.1
 python-dateutil==2.9.0.post0
 python-dotenv==1.2.1
 PyYAML==6.0.3
@@ -74,15 +68,15 @@ pyzmq==27.1.0
 requests==2.32.5
 requests-toolbelt==1.0.0
 shellingham==1.5.4
-six @ file:///AppleInternal/Library/BuildRoots/4~CAP1ugDqYZ2ZVF_54thwSWnK-8L4LO5_Zcx-VcI/Library/Caches/com.apple.xbs/Sources/python3/six-1.15.0-py2.py3-none-any.whl
 SQLAlchemy==2.0.45
 stack-data==0.6.3
+streamlit==1.26.0
 tenacity==9.1.2
 tokenizers==0.22.2
 tornado==6.5.2
 tqdm==4.67.1
 traitlets==5.14.3
-typer-slim==0.21.1
+transformers==4.34.0
 typing-inspect==0.9.0
 typing-inspection==0.4.2
 typing_extensions==4.15.0
@@ -90,6 +84,6 @@ urllib3==2.6.3
 uuid_utils==0.13.0
 uv==0.9.13
 wcwidth==0.2.14
+whisper==1.0.0
 yarl==1.22.0
 zipp==3.23.0
-zstandard==0.25.0

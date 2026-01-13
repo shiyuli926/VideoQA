@@ -38,6 +38,7 @@ pipe = pipeline(
     max_new_tokens=1024,
     temperature=0.1,
     do_sample=True,
+    return_full_text=False
 )
 llm = HuggingFacePipeline(pipeline=pipe)
 
@@ -114,43 +115,26 @@ def query_video(chain, question: str, chat_history: list = None):
         return "抱歉，处理您的请求时出错了。", chat_history
     
 def generate_summary(retriever):
-    """
-    通过提取检索器中的所有文档来生成视频全局摘要。
-    """
-    try:
-        # 1. 从检索器中获取所有文档片段 (针对小规模视频文案)
-        # 如果视频非常长，建议只取前 20 个 segments 或者增加一个专门的 summary 片段
-        all_docs = retriever.invoke("视频主要内容") 
-        context_text = "\n".join([doc.page_content for doc in all_docs])
+    all_docs = retriever.invoke("视频主要内容")
+    context_text = "\n".join([doc.page_content for doc in all_docs])
 
-        # 2. 定义摘要专用的 Prompt
-        summary_prompt = f"""<|im_start|>system
-        你是一个专业的视频内容分析助手。请根据提供的视频转录文本生成简洁的摘要。<|im_end|>
-        <|im_start|>user
-        视频转录文本如下：
-        {context_text}
+    summary_prompt = ChatPromptTemplate.from_messages([
+        ("system", "你是一个专业的视频内容分析助手。"),
+        ("human",
+         """以下是视频转录文本：
+        {context}
 
-        请按照以下要求生成：
-        1. 一句话概括核心主题。
-        2. 列出3-5个关键点（带上大致时间戳）。
-        3. 使用中文。
-        请开始生成摘要：<|im_end|>
-        <|im_start|>assistant
-        """
+        请完成：
+        1. 一句话概括核心主题
+        2. 列出 3–5 个关键点（带大致时间戳）
+        3. 使用中文总结"""
+        )
+    ])
 
-        # 3. 直接调用链中的 LLM (从 retrieval_chain 中获取底层 llm)        
-        logging.info("正在生成视频摘要...")
-        summary = llm.invoke(summary_prompt)
-        
-        # 针对 HuggingFaceEndpoint 返回对象或字符串的处理
-        summary_text = summary if isinstance(summary, str) else getattr(summary, 'content', str(summary))
+    chain = summary_prompt | llm | StrOutputParser()
 
-        print(f"\n--- 视频摘要 ---\n{summary_text}\n----------------")
-        return summary_text
-
-    except Exception as e:
-        logging.error(f"生成摘要出错: {e}")
-        return "无法生成视频摘要。"
+    summary = chain.invoke({"context": context_text})
+    return summary
     
 if __name__ == "__main__":
     # 假设你已经有了之前定义的 build_retriever
@@ -164,7 +148,8 @@ if __name__ == "__main__":
     video_rag_chain = build_qa_chain(my_retriever)
     
     # 3. 先看总结
-    generate_summary(my_retriever)
+    summary = generate_summary(my_retriever)
+    print("视频摘要:", summary)
     
     # 4. 进入交互
     history = []
