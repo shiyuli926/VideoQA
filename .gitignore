@@ -1,4 +1,45 @@
+# Python
 .venv/
 __pycache__/
 *.pyc
+
+# OS files
 .DS_Store
+
+# Cache and temporary files
+.ipynb_checkpoints/
+.cache/
+temp/
+data/cache/
+data/tmp/
+
+# Jupyter/Lab
+.jupyter/
+.local/
+.keras/
+
+# Shell and system files
+.bash_history
+.bashrc
+.gitconfig
+.lesshst
+.python_history
+.ssh/
+
+# Node/npm
+node_modules/
+.npm/
+package-lock.json
+
+# Streamlit runtime files (keep config.toml tracked)
+.streamlit/machine_id_v4
+.streamlit/streamlit/
+
+# Video and media files
+*.mp4
+*.avi
+
+# Generated transcript and output files
+processed_transcript*.txt
+output*.txt
+*.log
