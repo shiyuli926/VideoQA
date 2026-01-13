@@ -31,7 +31,7 @@ node_modules/
 .npm/
 package-lock.json
 
-# Streamlit
+# Streamlit runtime files (keep config.toml tracked)
 .streamlit/machine_id_v4
 .streamlit/streamlit/
 
